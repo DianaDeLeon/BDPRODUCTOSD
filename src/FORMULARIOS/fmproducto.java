@@ -2,12 +2,22 @@
 package FORMULARIOS;
 
 import DATOS.vproductos;
+import LOGICA.conexion;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import LOGICA.fproducto;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 public class fmproducto extends javax.swing.JFrame {
 
+    
+    private conexion mysql = new conexion(); //instancia para la conexion
+    private Connection cn = mysql.conectar();
+    
     public fmproducto() {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -59,7 +69,7 @@ public class fmproducto extends javax.swing.JFrame {
     try{
         DefaultTableModel modelo; 
         fproducto func=new fproducto(); //llama a la clase fproducto
-        modelo=func.mostrar(buscar);// Instancia la funcion mostrar de fproducto
+        modelo=func.mostrar(buscar,cn);// Instancia la funcion mostrar de fproducto
         
         tablalistado.setModel(modelo);//Asigna a la tabla los valores guardados en modelo
         lbltotalregistros.setText("Total Registros"+Integer.toString(func.totalregistros)); //Muestra en la etiqueta el total de productos registrados
@@ -95,6 +105,12 @@ public class fmproducto extends javax.swing.JFrame {
         btnnuevo = new javax.swing.JButton();
         btnguardar = new javax.swing.JButton();
         btncancelar = new javax.swing.JButton();
+        uncommited = new javax.swing.JButton();
+        commited = new javax.swing.JButton();
+        repeatable = new javax.swing.JButton();
+        serializable = new javax.swing.JButton();
+        bcommit = new javax.swing.JButton();
+        brollback = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -258,14 +274,56 @@ public class fmproducto extends javax.swing.JFrame {
             }
         });
 
+        uncommited.setBackground(new java.awt.Color(153, 204, 255));
+        uncommited.setText("UNCOMMITED");
+        uncommited.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                uncommitedActionPerformed(evt);
+            }
+        });
+
+        commited.setBackground(new java.awt.Color(153, 204, 255));
+        commited.setText("COMMITED");
+        commited.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                commitedActionPerformed(evt);
+            }
+        });
+
+        repeatable.setBackground(new java.awt.Color(153, 204, 255));
+        repeatable.setText("REPEATABLE");
+        repeatable.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                repeatableActionPerformed(evt);
+            }
+        });
+
+        serializable.setBackground(new java.awt.Color(153, 204, 255));
+        serializable.setText("SERIALIZABLE");
+        serializable.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                serializableActionPerformed(evt);
+            }
+        });
+
+        bcommit.setText("commit");
+        bcommit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bcommitActionPerformed(evt);
+            }
+        });
+
+        brollback.setText("rollback");
+        brollback.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                brollbackActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(txtidproducto, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -291,22 +349,48 @@ public class fmproducto extends javax.swing.JFrame {
                             .addComponent(jScrollPane1))
                         .addContainerGap())))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(34, 34, 34)
-                .addComponent(btnnuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnguardar)
-                .addGap(18, 18, 18)
-                .addComponent(btncancelar)
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addComponent(btnnuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnguardar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btncancelar)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtidproducto, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(uncommited, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(commited, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(repeatable, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(serializable, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(bcommit, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(brollback, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(17, 17, 17)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(brollback, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                    .addComponent(bcommit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtidproducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(34, 34, 34)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap(44, Short.MAX_VALUE)
-                        .addComponent(txtidproducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(34, 34, 34)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtnombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2))
@@ -314,18 +398,24 @@ public class fmproducto extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(145, 145, 145)
+                        .addGap(95, 95, 95)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(txtprecio_venta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(58, 58, 58)
+                .addGap(28, 28, 28)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnnuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnguardar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btncancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(34, 34, 34))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(uncommited, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                    .addComponent(repeatable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(serializable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(commited, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -348,7 +438,7 @@ public class fmproducto extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -392,7 +482,7 @@ public class fmproducto extends javax.swing.JFrame {
 
                 dts.setIdProductos(Integer.parseInt(txtidproducto.getText()));
 
-                func.eliminar(dts);
+                func.eliminar(dts,cn);
                 mostrar("");
                 inhabilitar();
             }
@@ -420,6 +510,7 @@ public class fmproducto extends javax.swing.JFrame {
     }//GEN-LAST:event_btnnuevoActionPerformed
 
     private void btnguardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnguardarActionPerformed
+//        int aux=0;
         if (txtnombre.getText().length()==0){ //Valida que numero contenga datos
             JOptionPane.showConfirmDialog(rootPane, "Debe ingresar un nombre para el producto");
             txtnombre.requestFocus();
@@ -445,24 +536,20 @@ public class fmproducto extends javax.swing.JFrame {
         dts.setNombre(txtnombre.getText());
         dts.setDescripcion(txtdescripcion.getText());
         dts.setPrecio(Double.parseDouble(txtprecio_venta.getText()));
-
+        
 
         if (accion.equals("guardar")){//Condicion para verificar si se va a guardar o modificar
-            if(func.insertar(dts)){//Verifica que los datos se esten insertando correctamente
-                JOptionPane.showMessageDialog(rootPane, "El producto fue registrado correctamente");
-                mostrar("");//Muestra todos los registros
-                inhabilitar();
-            }
+        func.insertar(dts,cn);   
+//            if(func.insertar(dts,cn)){//Verifica que los datos se esten insertando correctamente
+//                JOptionPane.showMessageDialog(rootPane, "El producto fue registrado correctamente");
+//                mostrar("");//Muestra todos los registros
+//                inhabilitar();
+//            }
 
         }
         else if(accion.equals("editar")){//Condicion para editar
             dts.setIdProductos(Integer.parseInt(txtidproducto.getText()));//Convierte lo del getText a un Integer
-
-            if(func.editar(dts)){
-                JOptionPane.showMessageDialog(rootPane, "El producto fue editado correctamente");
-                mostrar("");
-                inhabilitar();
-            }
+            func.editar(dts,cn);
         }
 
     }//GEN-LAST:event_btnguardarActionPerformed
@@ -470,6 +557,59 @@ public class fmproducto extends javax.swing.JFrame {
     private void btncancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btncancelarActionPerformed
         this.dispose();
     }//GEN-LAST:event_btncancelarActionPerformed
+
+    private void uncommitedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uncommitedActionPerformed
+        try {
+            cn.setTransactionIsolation(1);
+            System.out.println(cn.getTransactionIsolation());
+        } catch (SQLException ex) {
+            Logger.getLogger(fmproducto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_uncommitedActionPerformed
+
+    private void commitedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_commitedActionPerformed
+         try {
+            cn.setTransactionIsolation(2);
+            System.out.println(cn.getTransactionIsolation());
+        } catch (SQLException ex) {
+            Logger.getLogger(fmproducto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_commitedActionPerformed
+
+    private void repeatableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_repeatableActionPerformed
+        try {
+            cn.setTransactionIsolation(4);
+            System.out.println(cn.getTransactionIsolation());
+        } catch (SQLException ex) {
+            Logger.getLogger(fmproducto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_repeatableActionPerformed
+
+    private void serializableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_serializableActionPerformed
+        try {
+            cn.setTransactionIsolation(8);
+            System.out.println(cn.getTransactionIsolation());
+        } catch (SQLException ex) {
+            Logger.getLogger(fmproducto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_serializableActionPerformed
+
+    private void bcommitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bcommitActionPerformed
+        try {
+            cn.commit();
+        } catch (SQLException ex) {
+            Logger.getLogger(fmproducto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        mostrar("");
+    }//GEN-LAST:event_bcommitActionPerformed
+
+    private void brollbackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_brollbackActionPerformed
+        try {
+            cn.rollback();
+        } catch (SQLException ex) {
+            Logger.getLogger(fmproducto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_brollbackActionPerformed
 
     /**
      * @param args the command line arguments
@@ -508,12 +648,15 @@ public class fmproducto extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bcommit;
+    private javax.swing.JButton brollback;
     private javax.swing.JButton btnbuscar;
     private javax.swing.JButton btncancelar;
     private javax.swing.JButton btneliminar;
     private javax.swing.JButton btnguardar;
     private javax.swing.JButton btnnuevo;
     private javax.swing.JButton btnsalir;
+    private javax.swing.JButton commited;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
@@ -524,11 +667,14 @@ public class fmproducto extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lbltotalregistros;
+    private javax.swing.JButton repeatable;
+    private javax.swing.JButton serializable;
     private javax.swing.JTable tablalistado;
     private javax.swing.JTextField txtbuscar;
     private javax.swing.JTextArea txtdescripcion;
     private javax.swing.JTextField txtidproducto;
     private javax.swing.JTextField txtnombre;
     private javax.swing.JTextField txtprecio_venta;
+    private javax.swing.JButton uncommited;
     // End of variables declaration//GEN-END:variables
 }
