@@ -21,9 +21,6 @@ public class conexion {
         
         Class.forName("org.gjt.mm.mysql.Driver"); // Ruta del driver de la libreria de conexion
         link=DriverManager.getConnection(this.url,this.user,this.pass);  // enlace para la base de datos
-        link.setAutoCommit(false);
-        //conn.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
-//        link.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
         
     }catch(ClassNotFoundException | SQLException e){ //Excepciones específicas
         JOptionPane.showConfirmDialog(null,e); //Mensaje de error
@@ -31,6 +28,5 @@ public class conexion {
     }
     return link; //retornar cadena de conexion
     }
-    
       
 }

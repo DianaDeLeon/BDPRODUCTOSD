@@ -8,18 +8,15 @@ import java.sql.Statement;
 import javax.swing.JOptionPane;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class fproducto {
 
-//    private conexion mysql = new conexion(); //instancia para la conexion
-//    private Connection cn = mysql.conectar();// llama a la funcion conectar de la variable que instanciamos
+    private conexion mysql = new conexion(); //instancia para la conexion
+    private Connection cn = mysql.conectar();// llama a la funcion conectar de la variable que instanciamos
     private String sSQL = "";//almacena la cadena de conexion
     public Integer totalregistros; // Total de registros tiene
 
-    public DefaultTableModel mostrar(String buscar, Connection cn) {  // Mostrar los registros de la tabla producto
-        
+    public DefaultTableModel mostrar(String buscar) {  // Mostrar los registros de la tabla producto
         DefaultTableModel modelo;
 
         //Guarda los títulos de la columna
@@ -32,8 +29,6 @@ public class fproducto {
         sSQL = "select *from productos where nombre like '%" + buscar + "%' order by idProductos asc "; //Consulta para obtener los registros de la tabla
 
         try { //declaracion de errores 
-            
-            System.out.println(cn.getTransactionIsolation());
             Statement st = cn.createStatement();   // asigna a la variable de tipo Statement la conexion de La BD
             ResultSet rs = st.executeQuery(sSQL); //ejecuta la consulta de arriba  
 
@@ -55,37 +50,30 @@ public class fproducto {
 
     }
 
-    public boolean insertar(vproductos dts,Connection cn) {  // Funcion insertar, recibe todo lo de la clase vproductos 
-  
+    public boolean insertar(vproductos dts) {   // Funcion insertar, recibe todo lo de la clase vproductos
         sSQL = "insert into productos (nombre,descripcion,precio)"
                 + "values (?,?,?)";
         try {
-            
-            cn.setAutoCommit(false);
-//            cn.setTransactionIsolation(4);
-          System.out.println(cn.getTransactionIsolation());
-            
             PreparedStatement pst = cn.prepareStatement(sSQL);// prepara la cadena para poder insertar los registros
             pst.setString(1, dts.getNombre()); //Enviar 1 a 1 todos los valores
             pst.setString(2, dts.getDescripcion());
             pst.setDouble(3, dts.getPrecio());
 
-            int n = pst.executeUpdate();//almacena el estado de la ejecucucion del Statement   
-           
+            int n = pst.executeUpdate();//almacena el estado de la ejecucucion del Statement
 
             if (n != 0) { //condicion para ver si se ingresaron registros
                 return true;
             } else {
                 return false;
             }
-                      
+
         } catch (Exception e) {   // error si 
             JOptionPane.showConfirmDialog(null, e);//Lanza el mensaje de error
-             return false;
-           }
+            return false;
+        }
     }
-    
-    public boolean editar(vproductos dts,Connection cn) {
+
+    public boolean editar(vproductos dts) {
         sSQL = "update productos set nombre=?,descripcion=?,precio=?" //actualizar tabla producto
                 + "where idProductos =?";
 
@@ -110,7 +98,7 @@ public class fproducto {
         }
     }
 
-    public boolean eliminar(vproductos dts,Connection cn) {
+    public boolean eliminar(vproductos dts) {
         sSQL = "delete from productos where idProductos=?";  // Borra los registros de los productos en el ID indicado
 
         try {
@@ -129,7 +117,5 @@ public class fproducto {
             return false;
         }
     }
-    
-    
 
 }
